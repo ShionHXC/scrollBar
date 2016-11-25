@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			body,div,p{
+				margin: 0;
+				padding: 0;
+			}
+			#scrollWrap{
+				width:200px;
+			
+				border: 2px solid #ccc;
+				margin: 50px auto;
+				min-height: 300px;
+				max-height: 500px;
+			}
+			
+		</style>
+	</head>
+	<body>
+	
+		<div id="scrollWrap">
+			<div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+				<div>1</div>
+			</div>
+		</div>
+		<script src="js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			(function($){
+				$.fn.myScrollBar = function(){
+					//this.css({'overflow':'hidden','position':'relative'});
+					var scrollBarStr = '<div class="scroll-bar"></div>';
+					this.append(scrollBarStr);
+					var scrollWrapH = this.height();
+					var scrollCont = this.children().eq(0);
+					var scrollContH = scrollCont.height();
+					
+					this.css({'overflow':'hidden','position':'relative','height':scrollWrapH});
+					if(scrollWrapH >= scrollContH){
+						return false;
+					}else{
+						var rate = scrollWrapH/scrollContH;
+						var scrollBarH = scrollWrapH*rate;
+						var scrollBar = $('.scroll-bar');
+						var offset = this.offset();
+	       				var offsetT = offset.top+1;
+						scrollBar.attr('style','width:8px;height:'+scrollBarH+'px;background:#333;border-radius: 3px;position:absolute;top:0;right: 0;opacity:0.3;filter:alpha(opacity=30);');
+						scrollCont.css({'position':'absolute','top':'0','left':'0'});
+
+						//鼠标滚轮
+					
+						this.on("mousewheel DOMMouseScroll", function(e) {
+							var delta = (e.originalEvent.wheelDelta && (e.originalEvent.wheelDelta > 0 ? 1 : -1)) || // chrome & ie
+								(e.originalEvent.detail && (e.originalEvent.detail > 0 ? -1 : 1)); // firefox
+							var barTop = parseInt(scrollBar.css('top'));
+							var contTop = parseInt(scrollCont.css('top'));
+							if(delta > 0) {							
+								if(barTop>0){
+									scrollCont.css("top", (contTop+20) + "px");
+									scrollBar.css("top", (barTop-20*rate) + "px");
+								}else{
+									scrollCont.css("top", "0");
+									scrollBar.css("top", "0");
+								}
+							} else if(delta < 0) {
+								if(barTop < scrollWrapH*(1-rate)){
+									scrollCont.css("top", (contTop-20) + "px");
+									scrollBar.css("top", (barTop+20*rate) + "px");
+								}else{
+									scrollCont.css("top", (scrollWrapH-scrollContH)+"px");
+									scrollBar.css("top", scrollWrapH*(1-rate)+"0");
+								}
+							};
+							 return false;    //  阻止事件冒泡
+						});
+						
+						scrollBar.mousedown(function(e) {
+							$(this).stop().fadeTo('fast',0.6);
+							var divOffsetT = scrollBar.offset().top;
+							var tempT = e.pageY - divOffsetT;
+							function move(e) {
+								var newH = e.pageY - tempT - offsetT;
+								if(newH < 0) {
+									newH = 0;
+								} else if(newH > (scrollWrapH - scrollBarH)) {
+									newH = scrollWrapH - scrollBarH;
+								}
+								var rate2 = (newH + scrollBarH) / scrollWrapH;
+								var contentH = Math.floor(scrollContH * rate2 - scrollWrapH);
+								scrollCont.css("top", - contentH + "px");
+								scrollBar.css("top", newH + "px");
+							}
+							$("body").on("mousemove", move);
+							$("body").mouseup(function() {
+								$("body").off("mousemove", move);
+								scrollBar.stop().fadeTo('fast',0.3);
+							});
+							return false;
+						});	
+					}
+				}
+			})(jQuery);
+			$('#scrollWrap').myScrollBar();
+
+		</script>
+	</body>
+</html>
